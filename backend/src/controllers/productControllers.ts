@@ -2,6 +2,31 @@ import { Request, Response } from "express"
 import { Product } from "../models/productModel"
 import { email, success } from "zod/v4"
 
+const searchProductsByName = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { name } = req.query;
+
+    if (!name || typeof name !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: "El parámetro 'name' es obligatorio y debe ser una cadena"
+      });
+    }
+
+    const products = await Product.find({
+      name: { $regex: name, $options: 'i' }  // Búsqueda insensible a mayúsculas, coincidencia parcial
+    });
+
+    res.json({
+      success: true,
+      message: "Productos encontrados",
+      data: products
+    });
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 const getAllProducts = async (req: Request, res: Response): Promise<any> => {
   try {
     const products = await Product.find()
@@ -89,4 +114,4 @@ const updateProduct = async (req: Request, res: Response): Promise<any> => {
   }
 }
 
-export { getAllProducts, createProduct, deleteProduct, updateProduct }
+export { getAllProducts, createProduct, deleteProduct, updateProduct, searchProductsByName }
