@@ -14,7 +14,7 @@ const Home = () => {
 
   const fetchingProducts = async () => {
     try {
-      const response = await fetch("http://localhost:1234/api/products")
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products`)
 
       if (!response.ok) {
         setError("Sesión terminada, vuelve a loguearte.")
